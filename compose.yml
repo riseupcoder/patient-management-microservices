@@ -1,0 +1,32 @@
+services:
+  postgres:
+    container_name: postgres
+
+    image: postgres:18-alpine
+
+    security_opt:
+      - no-new-privileges:true
+
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      PGDATA: /data/postgres
+
+    volumes:
+      - postgres:/data/postgres
+
+    ports: 
+      - "5432:5432"
+
+    networks:
+      - springboot-net
+
+    restart: unless-stopped
+
+networks:
+  springboot-net:
+    external: true
+    name: springboot-net
+
+volumes:
+  postgres:

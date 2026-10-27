@@ -22,6 +22,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
     implementation("org.mapstruct:mapstruct:1.7.0.Beta2")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.7.0.Beta2")
     compileOnly("org.projectlombok:lombok")

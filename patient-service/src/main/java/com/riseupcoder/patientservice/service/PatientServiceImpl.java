@@ -4,6 +4,8 @@ import com.riseupcoder.patientservice.dto.request.CreatePatientRequest;
 import com.riseupcoder.patientservice.dto.request.UpdatePatientRequest;
 import com.riseupcoder.patientservice.dto.response.PatientPageResponse;
 import com.riseupcoder.patientservice.dto.response.PatientResponse;
+import com.riseupcoder.patientservice.exception.APIException;
+import com.riseupcoder.patientservice.exception.ResourceNotFoundException;
 import com.riseupcoder.patientservice.mapper.PatientMapper;
 import com.riseupcoder.patientservice.model.Patient;
 import com.riseupcoder.patientservice.repository.PatientRepository;
@@ -51,6 +53,9 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public PatientResponse createPatient(CreatePatientRequest createPatientRequest) {
 
+        if (patientRepository.existsByEmail(createPatientRequest.email()))
+            throw new APIException("This email address already exists");
+
         Patient patient = patientMapper.toEntity(createPatientRequest);
 
         patient.setRegisteredDate(LocalDate.now());
@@ -64,9 +69,13 @@ public class PatientServiceImpl implements PatientService {
     @Transactional
     public PatientResponse updatePatient(UUID patientId, UpdatePatientRequest updatePatientRequest) {
 
+        if (updatePatientRequest.email() != null) {
+            if (patientRepository.existsByEmailAndIdNot(updatePatientRequest.email(), patientId))
+                throw new APIException("This email address already exists");
+        }
+
         Patient patient = patientRepository.findById(patientId).orElseThrow(() ->
-                new RuntimeException("Patient with patientId " +
-                        patientId + " not found."));
+                new ResourceNotFoundException("Patient", "patientId", patientId));
 
         patientMapper.updateEntity(updatePatientRequest, patient);
 
@@ -77,7 +86,7 @@ public class PatientServiceImpl implements PatientService {
     public void deletePatient(UUID patientId) {
 
         if (!patientRepository.existsById(patientId))
-            throw new RuntimeException("Patient with patientId: " + patientId + " not found");
+            throw new ResourceNotFoundException("Patient", "patientId", patientId);
 
         patientRepository.deleteById(patientId);
     }

@@ -2,6 +2,7 @@ plugins {
     java
     id("org.springframework.boot") version "4.1.2"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.google.protobuf") version "0.10.0"
 }
 
 group = "com.riseupcoder"
@@ -11,6 +12,12 @@ description = "patient-service"
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(27)
+    }
+}
+
+protobuf {
+    plugins {
+        create("grpc")
     }
 }
 
@@ -24,6 +31,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
     implementation("org.mapstruct:mapstruct:1.7.0.Beta2")
+    implementation("org.springframework.boot:spring-boot-starter-grpc-client")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.7.0.Beta2")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")

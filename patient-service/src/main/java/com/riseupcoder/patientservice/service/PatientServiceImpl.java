@@ -6,6 +6,7 @@ import com.riseupcoder.patientservice.dto.response.PatientPageResponse;
 import com.riseupcoder.patientservice.dto.response.PatientResponse;
 import com.riseupcoder.patientservice.exception.APIException;
 import com.riseupcoder.patientservice.exception.ResourceNotFoundException;
+import com.riseupcoder.patientservice.grpc.BillingServiceGrpcClient;
 import com.riseupcoder.patientservice.mapper.PatientMapper;
 import com.riseupcoder.patientservice.model.Patient;
 import com.riseupcoder.patientservice.repository.PatientRepository;
@@ -23,10 +24,12 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
+    private final BillingServiceGrpcClient billingServiceGrpcClient;
 
-    public PatientServiceImpl(PatientRepository patientRepository, PatientMapper patientMapper) {
+    public PatientServiceImpl(PatientRepository patientRepository, PatientMapper patientMapper, BillingServiceGrpcClient billingServiceGrpcClient) {
         this.patientRepository = patientRepository;
         this.patientMapper = patientMapper;
+        this.billingServiceGrpcClient = billingServiceGrpcClient;
     }
 
     @Override
@@ -61,6 +64,12 @@ public class PatientServiceImpl implements PatientService {
         patient.setRegisteredDate(LocalDate.now());
 
         patientRepository.save(patient);
+
+        billingServiceGrpcClient.createBillingAccount(
+                patient.getId().toString(),
+                patient.getName(),
+                patient.getEmail()
+        );
 
         return patientMapper.toDto(patient);
     }

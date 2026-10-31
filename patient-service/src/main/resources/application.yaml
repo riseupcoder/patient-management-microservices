@@ -2,28 +2,5 @@ spring:
   application:
     name: patient-service
 
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-
-  sql:
-    init:
-      mode: always
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-
-  mvc:
-    problemdetails:
-      enabled: true
-
-  grpc:
-    client:
-      channel:
-        billing:
-          target: static://localhost:9092
-
-server:
-  port: 8081
+  config:
+    import: optional:configserver:http://spring:8888

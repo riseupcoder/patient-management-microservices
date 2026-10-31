@@ -7,6 +7,7 @@ import com.riseupcoder.patientservice.dto.response.PatientResponse;
 import com.riseupcoder.patientservice.exception.APIException;
 import com.riseupcoder.patientservice.exception.ResourceNotFoundException;
 import com.riseupcoder.patientservice.grpc.BillingServiceGrpcClient;
+import com.riseupcoder.patientservice.kafka.KafkaProducer;
 import com.riseupcoder.patientservice.mapper.PatientMapper;
 import com.riseupcoder.patientservice.model.Patient;
 import com.riseupcoder.patientservice.repository.PatientRepository;
@@ -25,11 +26,13 @@ public class PatientServiceImpl implements PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
     private final BillingServiceGrpcClient billingServiceGrpcClient;
+    private final KafkaProducer kafkaProducer;
 
-    public PatientServiceImpl(PatientRepository patientRepository, PatientMapper patientMapper, BillingServiceGrpcClient billingServiceGrpcClient) {
+    public PatientServiceImpl(PatientRepository patientRepository, PatientMapper patientMapper, BillingServiceGrpcClient billingServiceGrpcClient, KafkaProducer kafkaProducer) {
         this.patientRepository = patientRepository;
         this.patientMapper = patientMapper;
         this.billingServiceGrpcClient = billingServiceGrpcClient;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @Override
@@ -70,6 +73,9 @@ public class PatientServiceImpl implements PatientService {
                 patient.getName(),
                 patient.getEmail()
         );
+
+
+        kafkaProducer.sendEvent(patient);
 
         return patientMapper.toDto(patient);
     }

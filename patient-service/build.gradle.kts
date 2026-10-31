@@ -4,6 +4,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("com.google.protobuf") version "0.10.0"
 }
+val springCloudVersion by extra("2025.1.4")
 
 group = "com.riseupcoder"
 version = "0.0.1-SNAPSHOT"
@@ -32,6 +33,9 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
     implementation("org.mapstruct:mapstruct:1.7.0.Beta2")
     implementation("org.springframework.boot:spring-boot-starter-grpc-client")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
+    implementation("org.springframework.cloud:spring-cloud-starter-config")
+    testImplementation("org.springframework.kafka:spring-kafka-test")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.7.0.Beta2")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
@@ -41,6 +45,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+    }
 }
 
 tasks.withType<Test> {
